@@ -1,4 +1,17 @@
 <resources>
     <string name="app_name">TimeLog</string>
     <string name="action_settings">Settings</string>
+
+    <!-- main screen -->
+    <string name="change_date">Changer la date</string>
+    <string name="morning">Arrivée</string>
+    <string name="lunch_start">Début de la pause de midi</string>
+    <string name="lunch_end">Fin de la pause de midi</string>
+    <string name="evening">Départ</string>
+    <string name="now">Maintenant</string>
+    <string name="change_time">Choisir</string>
+    <string name="save">Enregistrer</string>
+    <string name="error_incoherent_markers">Attention : les heures choisies ne sont pas ohérentes.</string>
+    <string name="technical_error">Erreur</string>
+    <string name="technical_error_msg">Nous sommes désolés, une erreur technique est survenue lors de la sauvegarde...</string>
 </resources>
