@@ -69,7 +69,7 @@ public class MainActivity extends Activity implements DatePickerFragment.Fragmen
     }
 
     private void loadSavedData() {
-        service.loadDayWorklog(calendar.getTime(), getApplicationContext());
+        times = service.loadDayWorklog(calendar.getTime(), getApplicationContext());
         for (Map.Entry<Marker, Time> timeEntry : times.entrySet()) {
             displayTime(timeEntry.getKey(), timeEntry.getValue());
         }
