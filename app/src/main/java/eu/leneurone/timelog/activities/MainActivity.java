@@ -15,6 +15,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import eu.leneurone.timelog.R;
+import eu.leneurone.timelog.exceptions.IncoherentMarkersException;
 import eu.leneurone.timelog.fragments.DatePickerFragment;
 import eu.leneurone.timelog.fragments.TimePickerFragment;
 import eu.leneurone.timelog.model.Marker;
@@ -41,7 +42,9 @@ public class MainActivity extends Activity implements DatePickerFragment.Fragmen
      */
     Map<Marker, Time> times = new HashMap<>(4);
 
-    /** storage service */
+    /**
+     * storage service
+     */
     StorageService service = new StorageServiceImpl();
 
     @Override
@@ -64,6 +67,11 @@ public class MainActivity extends Activity implements DatePickerFragment.Fragmen
     public void onDateSet(Date date) {
         calendar.setTime(date);
         setTvDisplayDate(date);
+
+        // mask the "Now" buttons if the selected date is not today
+        setButtonsNowVisibility(calendar.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR)
+                && calendar.get(Calendar.DAY_OF_YEAR) == Calendar.getInstance().get(Calendar.DAY_OF_YEAR));
+
         clearTimes();
         loadSavedData();
     }
@@ -149,17 +157,18 @@ public class MainActivity extends Activity implements DatePickerFragment.Fragmen
             @Override
             public void onClick(View v) {
                 TextView tvValidation = (TextView) findViewById(R.id.validation);
-                if (TimesValidator.areMarkersCoherent(times)) {
+                try {
+                    TimesValidator.validateMarkersCoherency(times);
                     // clear previous validation error (if any)
                     tvValidation.setText("");
                     // store the data
                     service.storeDayWorklog(calendar.getTime(), times, getApplicationContext());
-                } else {
+                } catch (IncoherentMarkersException e) {
                     tvValidation.setText(R.string.error_incoherent_markers);
+                    // TODO highlight the bad values
                 }
             }
         });
-
     }
 
     private void configureTimePickerButton(int buttonId, final Marker marker) {
@@ -180,6 +189,8 @@ public class MainActivity extends Activity implements DatePickerFragment.Fragmen
 
     private void configureButtonNow(int buttonId, final Marker marker) {
         Button btnMorningNow = (Button) findViewById(buttonId);
+
+        // we're displaying data for today
         btnMorningNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -188,4 +199,13 @@ public class MainActivity extends Activity implements DatePickerFragment.Fragmen
             }
         });
     }
+
+    private void setButtonsNowVisibility(boolean areVisible) {
+        int visibility = areVisible ? View.VISIBLE : View.INVISIBLE;
+        findViewById(R.id.btnMorningTimeNow).setVisibility(visibility);
+        findViewById(R.id.btnLunchStartTimeNow).setVisibility(visibility);
+        findViewById(R.id.btnLunchEndNow).setVisibility(visibility);
+        findViewById(R.id.btnEveningTimeNow).setVisibility(visibility);
+    }
+
 }

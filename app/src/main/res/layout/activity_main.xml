@@ -47,8 +47,7 @@
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                />
+                android:layout_weight="1" />
 
             <Button
                 android:id="@+id/btnChangeDate"
@@ -188,33 +187,32 @@
             android:text=""
             android:textColor="@color/colorAccent" />
 
-        <LinearLayout
-            android:id="@+id/saveLayout"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_gravity="center_horizontal"
+            android:text="@string/save" />
 
-            <!-- empty view to center the "save" button  -->
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                />
 
-            <Button
-                android:id="@+id/btnSave"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/save" />
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_gravity="center_horizontal" />
 
-            <!-- empty view to center the "save" button  -->
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/total" />
 
-        </LinearLayout>
+        <TextView
+            android:id="@+id/tvTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text=""
+            android:textAppearance="?android:attr/textAppearanceLarge" />
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
