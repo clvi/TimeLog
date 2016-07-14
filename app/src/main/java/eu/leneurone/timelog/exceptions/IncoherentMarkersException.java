@@ -7,28 +7,36 @@ import eu.leneurone.timelog.model.Marker;
  */
 public class IncoherentMarkersException extends Exception {
 
-    private Marker soonerMarker;
-    private Marker laterMarker;
+    private Marker earliest;
+    private Marker latest;
 
-    public IncoherentMarkersException(Marker soonerMarker, Marker laterMarker) {
-        this.soonerMarker = soonerMarker;
-        this.laterMarker = laterMarker;
+    public IncoherentMarkersException(Marker earliest, Marker latest) {
+        this.earliest = earliest;
+        this.latest = latest;
     }
 
-    public Marker getSoonerMarker() {
-        return soonerMarker;
+    public Marker getEarliest() {
+        return earliest;
     }
 
-    public Marker getLaterMarker() {
-        return laterMarker;
+    public Marker getLatest() {
+        return latest;
     }
 
     @Override
     public String getMessage() {
-        if (laterMarker != null && soonerMarker != null) {
-            return "Value of marker " + laterMarker + " is sooner than the value of marker " + soonerMarker;
+        if (latest != null && earliest != null) {
+            return "Value of marker " + latest + " is sooner than the value of marker " + earliest;
         } else {
             return "Values of markers are incoherent (a later marker has a sooner value than a sooner marker)";
         }
+    }
+
+    @Override
+    public String toString() {
+        return "IncoherentMarkersException{" +
+                "earliest=" + earliest +
+                ", latest=" + latest +
+                '}';
     }
 }
