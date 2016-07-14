@@ -1,8 +1,9 @@
 package eu.leneurone.timelog.activities;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -29,7 +30,7 @@ import eu.leneurone.timelog.validators.TimesValidator;
 /**
  * Main screen of the app
  */
-public class MainActivity extends Activity implements DatePickerFragment.FragmentResultInterested, TimePickerFragment.FragmentResultInterested {
+public class MainActivity extends AppCompatActivity implements DatePickerFragment.FragmentResultInterested, TimePickerFragment.FragmentResultInterested {
 
     /**
      * Stores the chosen date
@@ -49,6 +50,11 @@ public class MainActivity extends Activity implements DatePickerFragment.Fragmen
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        //noinspection ConstantConditions
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
 
         calendar = Calendar.getInstance();
 
