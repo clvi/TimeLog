@@ -18,10 +18,12 @@ import eu.leneurone.timelog.R;
 import eu.leneurone.timelog.exceptions.IncoherentMarkersException;
 import eu.leneurone.timelog.fragments.DatePickerFragment;
 import eu.leneurone.timelog.fragments.TimePickerFragment;
+import eu.leneurone.timelog.math.TotalCalculator;
 import eu.leneurone.timelog.model.Marker;
 import eu.leneurone.timelog.model.Time;
 import eu.leneurone.timelog.services.StorageService;
 import eu.leneurone.timelog.services.impl.StorageServiceImpl;
+import eu.leneurone.timelog.utils.TimeUtils;
 import eu.leneurone.timelog.validators.TimesValidator;
 
 /**
@@ -33,10 +35,6 @@ public class MainActivity extends Activity implements DatePickerFragment.Fragmen
      * Stores the chosen date
      */
     private Calendar calendar;
-    /**
-     * Displays the current or chosen date
-     */
-    private TextView tvDisplayDate;
     /**
      * stores the chosen times for the 4 markers
      */
@@ -55,8 +53,7 @@ public class MainActivity extends Activity implements DatePickerFragment.Fragmen
         calendar = Calendar.getInstance();
 
         // init the displayed date to the current day
-        tvDisplayDate = (TextView) findViewById(R.id.tvDate);
-        setTvDisplayDate(calendar.getTime());
+        setTvDisplayDate();
 
         loadSavedData();
 
@@ -66,7 +63,7 @@ public class MainActivity extends Activity implements DatePickerFragment.Fragmen
     @Override
     public void onDateSet(Date date) {
         calendar.setTime(date);
-        setTvDisplayDate(date);
+        setTvDisplayDate();
 
         // mask the "Now" buttons if the selected date is not today
         setButtonsNowVisibility(calendar.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR)
@@ -76,11 +73,25 @@ public class MainActivity extends Activity implements DatePickerFragment.Fragmen
         loadSavedData();
     }
 
+    @Override
+    public void onTimeSet(@NonNull Marker marker, @NonNull Time time) {
+        times.put(marker, time);
+        displayTime(marker, time);
+        refreshTotal();
+    }
+
+    private void setTvDisplayDate() {
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
+        TextView tvDisplayDate = (TextView) findViewById(R.id.tvDate);
+        tvDisplayDate.setText(format.format(calendar.getTime()));
+    }
+
     private void loadSavedData() {
         times = service.loadDayWorklog(calendar.getTime(), getApplicationContext());
         for (Map.Entry<Marker, Time> timeEntry : times.entrySet()) {
             displayTime(timeEntry.getKey(), timeEntry.getValue());
         }
+        refreshTotal();
     }
 
     private void clearTimes() {
@@ -95,38 +106,40 @@ public class MainActivity extends Activity implements DatePickerFragment.Fragmen
         times.clear();
     }
 
-    @Override
-    public void onTimeSet(@NonNull Marker marker, @NonNull Time time) {
-        times.put(marker, time);
-        displayTime(marker, time);
+    private void refreshTotal() {
+        // compute and display total work time
+        TextView tvTotal = (TextView) findViewById(R.id.tvTotal);
+        try {
+            tvTotal.setText(TimeUtils.formatTime(TotalCalculator.calculateTotalTime(calendar, times)));
+            // clear previous validation errors
+            clearValidationTv();
+        } catch (IncoherentMarkersException e) {
+            handleIncoherentMarkersException(e);
+        }
     }
 
     private void displayTime(Marker marker, Time time) {
+        String formattedTime = TimeUtils.formatTime(time);
         switch (marker) {
             case MORNING:
                 TextView tvMorningTime = (TextView) findViewById(R.id.morningTime);
-                tvMorningTime.setText(String.format(Locale.FRANCE, "%02d:%02d", time.getHour(), time.getMinute()));
+                tvMorningTime.setText(formattedTime);
                 break;
             case LUNCH_START:
                 TextView tvLunchStart = (TextView) findViewById(R.id.lunchStartTime);
-                tvLunchStart.setText(String.format(Locale.FRANCE, "%02d:%02d", time.getHour(), time.getMinute()));
+                tvLunchStart.setText(formattedTime);
                 break;
             case LUNCH_END:
                 TextView tvLunchEnd = (TextView) findViewById(R.id.lunchEndTime);
-                tvLunchEnd.setText(String.format(Locale.FRANCE, "%02d:%02d", time.getHour(), time.getMinute()));
+                tvLunchEnd.setText(formattedTime);
                 break;
             case EVENING:
                 TextView tvEvening = (TextView) findViewById(R.id.eveningTime);
-                tvEvening.setText(String.format(Locale.FRANCE, "%02d:%02d", time.getHour(), time.getMinute()));
+                tvEvening.setText(formattedTime);
                 break;
             default:
                 break;
         }
-    }
-
-    private void setTvDisplayDate(Date date) {
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
-        tvDisplayDate.setText(format.format(date));
     }
 
     private void configureButtons() {
@@ -156,19 +169,61 @@ public class MainActivity extends Activity implements DatePickerFragment.Fragmen
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView tvValidation = (TextView) findViewById(R.id.validation);
                 try {
                     TimesValidator.validateMarkersCoherency(times);
                     // clear previous validation error (if any)
-                    tvValidation.setText("");
+                    clearValidationTv();
                     // store the data
                     service.storeDayWorklog(calendar.getTime(), times, getApplicationContext());
+                    // TODO display a small and temporary OK icon
                 } catch (IncoherentMarkersException e) {
-                    tvValidation.setText(R.string.error_incoherent_markers);
-                    // TODO highlight the bad values
+                    handleIncoherentMarkersException(e);
                 }
             }
         });
+    }
+
+    private void clearValidationTv() {
+        TextView tvValidation = (TextView) findViewById(R.id.validation);
+        tvValidation.setText("");
+        for(Marker marker : Marker.values()) {
+            highlightTime(marker, getResources().getColor(android.R.color.primary_text_light));
+        }
+        Button btnSave = (Button) findViewById(R.id.btnSave);
+        btnSave.setEnabled(true);
+    }
+
+    private void handleIncoherentMarkersException(IncoherentMarkersException e) {
+        TextView tvValidation = (TextView) findViewById(R.id.validation);
+        tvValidation.setText(R.string.error_incoherent_markers);
+        highlightTime(e.getEarliest(), getResources().getColor(R.color.colorAccent));
+        highlightTime(e.getLatest(), getResources().getColor(R.color.colorAccent));
+
+        Button btnSave = (Button) findViewById(R.id.btnSave);
+        btnSave.setEnabled(false);
+    }
+
+    private void highlightTime(@NonNull Marker marker, int color) {
+        switch (marker) {
+            case MORNING:
+                TextView tvMorningTime = (TextView) findViewById(R.id.morningTime);
+                tvMorningTime.setTextColor(color);
+                break;
+            case LUNCH_START:
+                TextView tvLunchStart = (TextView) findViewById(R.id.lunchStartTime);
+                tvLunchStart.setTextColor(color);
+                break;
+            case LUNCH_END:
+                TextView tvLunchEnd = (TextView) findViewById(R.id.lunchEndTime);
+                tvLunchEnd.setTextColor(color);
+                break;
+            case EVENING:
+                TextView tvEvening = (TextView) findViewById(R.id.eveningTime);
+                tvEvening.setTextColor(color);
+                break;
+            default:
+                break;
+        }
     }
 
     private void configureTimePickerButton(int buttonId, final Marker marker) {
