@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -72,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         setTvDisplayDate();
 
         // mask the "Now" buttons if the selected date is not today
-        setButtonsNowVisibility(calendar.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR)
+        setButtonsVisibility(calendar.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR)
                 && calendar.get(Calendar.DAY_OF_YEAR) == Calendar.getInstance().get(Calendar.DAY_OF_YEAR));
 
         clearTimes();
@@ -88,8 +87,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
 
     private void setTvDisplayDate() {
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
-        TextView tvDisplayDate = (TextView) findViewById(R.id.tvDate);
-        tvDisplayDate.setText(format.format(calendar.getTime()));
+        ((TextView) findViewById(R.id.tvDate)).setText(format.format(calendar.getTime()));
     }
 
     private void loadSavedData() {
@@ -101,22 +99,17 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
     }
 
     private void clearTimes() {
-        TextView tvMorningTime = (TextView) findViewById(R.id.morningTime);
-        tvMorningTime.setText("");
-        TextView tvLunchStart = (TextView) findViewById(R.id.lunchStartTime);
-        tvLunchStart.setText("");
-        TextView tvLunchEnd = (TextView) findViewById(R.id.lunchEndTime);
-        tvLunchEnd.setText("");
-        TextView tvEvening = (TextView) findViewById(R.id.eveningTime);
-        tvEvening.setText("");
+        ((TextView) findViewById(R.id.morningTime)).setText("");
+        ((TextView) findViewById(R.id.lunchStartTime)).setText("");
+        ((TextView) findViewById(R.id.lunchEndTime)).setText("");
+        ((TextView) findViewById(R.id.eveningTime)).setText("");
         times.clear();
     }
 
     private void refreshTotal() {
         // compute and display total work time
-        TextView tvTotal = (TextView) findViewById(R.id.tvTotal);
         try {
-            tvTotal.setText(TimeUtils.formatTime(TotalCalculator.calculateTotalTime(calendar, times)));
+            ((TextView) findViewById(R.id.tvTotal)).setText(TimeUtils.formatTime(TotalCalculator.calculateTotalTime(calendar, times)));
             // clear previous validation errors
             clearValidationTv();
         } catch (IncoherentMarkersException e) {
@@ -128,20 +121,16 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         String formattedTime = TimeUtils.formatTime(time);
         switch (marker) {
             case MORNING:
-                TextView tvMorningTime = (TextView) findViewById(R.id.morningTime);
-                tvMorningTime.setText(formattedTime);
+                ((TextView) findViewById(R.id.morningTime)).setText(formattedTime);
                 break;
             case LUNCH_START:
-                TextView tvLunchStart = (TextView) findViewById(R.id.lunchStartTime);
-                tvLunchStart.setText(formattedTime);
+                ((TextView) findViewById(R.id.lunchStartTime)).setText(formattedTime);
                 break;
             case LUNCH_END:
-                TextView tvLunchEnd = (TextView) findViewById(R.id.lunchEndTime);
-                tvLunchEnd.setText(formattedTime);
+                ((TextView) findViewById(R.id.lunchEndTime)).setText(formattedTime);
                 break;
             case EVENING:
-                TextView tvEvening = (TextView) findViewById(R.id.eveningTime);
-                tvEvening.setText(formattedTime);
+                ((TextView) findViewById(R.id.eveningTime)).setText(formattedTime);
                 break;
             default:
                 break;
@@ -149,8 +138,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
     }
 
     private void configureButtons() {
-        Button btnChangeDate = (Button) findViewById(R.id.btnChangeDate);
-        btnChangeDate.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btnChangeDate).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO display a confirmation popup if times have been set and not saved,
@@ -171,8 +159,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         configureButtonNow(R.id.btnLunchEndNow, Marker.LUNCH_END);
         configureButtonNow(R.id.btnEveningTimeNow, Marker.EVENING);
 
-        Button btnSave = (Button) findViewById(R.id.btnSave);
-        btnSave.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btnSave).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
@@ -187,45 +174,44 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
                 }
             }
         });
+
+        findViewById(R.id.btnRefresh).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refreshTotal();
+            }
+        });
     }
 
     private void clearValidationTv() {
-        TextView tvValidation = (TextView) findViewById(R.id.validation);
-        tvValidation.setText("");
-        for(Marker marker : Marker.values()) {
+        ((TextView) findViewById(R.id.validation)).setText("");
+        for (Marker marker : Marker.values()) {
             highlightTime(marker, getResources().getColor(android.R.color.primary_text_light));
         }
-        Button btnSave = (Button) findViewById(R.id.btnSave);
-        btnSave.setEnabled(true);
+        findViewById(R.id.btnSave).setEnabled(true);
     }
 
     private void handleIncoherentMarkersException(IncoherentMarkersException e) {
-        TextView tvValidation = (TextView) findViewById(R.id.validation);
-        tvValidation.setText(R.string.error_incoherent_markers);
+        ((TextView) findViewById(R.id.validation)).setText(R.string.error_incoherent_markers);
         highlightTime(e.getEarliest(), getResources().getColor(R.color.colorAccent));
         highlightTime(e.getLatest(), getResources().getColor(R.color.colorAccent));
 
-        Button btnSave = (Button) findViewById(R.id.btnSave);
-        btnSave.setEnabled(false);
+        findViewById(R.id.btnSave).setEnabled(false);
     }
 
     private void highlightTime(@NonNull Marker marker, int color) {
         switch (marker) {
             case MORNING:
-                TextView tvMorningTime = (TextView) findViewById(R.id.morningTime);
-                tvMorningTime.setTextColor(color);
+                ((TextView) findViewById(R.id.morningTime)).setTextColor(color);
                 break;
             case LUNCH_START:
-                TextView tvLunchStart = (TextView) findViewById(R.id.lunchStartTime);
-                tvLunchStart.setTextColor(color);
+                ((TextView) findViewById(R.id.lunchStartTime)).setTextColor(color);
                 break;
             case LUNCH_END:
-                TextView tvLunchEnd = (TextView) findViewById(R.id.lunchEndTime);
-                tvLunchEnd.setTextColor(color);
+                ((TextView) findViewById(R.id.lunchEndTime)).setTextColor(color);
                 break;
             case EVENING:
-                TextView tvEvening = (TextView) findViewById(R.id.eveningTime);
-                tvEvening.setTextColor(color);
+                ((TextView) findViewById(R.id.eveningTime)).setTextColor(color);
                 break;
             default:
                 break;
@@ -233,8 +219,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
     }
 
     private void configureTimePickerButton(int buttonId, final Marker marker) {
-        Button btnChangeMorningTime = (Button) findViewById(buttonId);
-        btnChangeMorningTime.setOnClickListener(new View.OnClickListener() {
+        findViewById(buttonId).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 TimePickerFragment picker = new TimePickerFragment();
@@ -249,10 +234,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
     }
 
     private void configureButtonNow(int buttonId, final Marker marker) {
-        Button btnMorningNow = (Button) findViewById(buttonId);
-
         // we're displaying data for today
-        btnMorningNow.setOnClickListener(new View.OnClickListener() {
+        findViewById(buttonId).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar calendar = Calendar.getInstance();
@@ -261,12 +244,13 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         });
     }
 
-    private void setButtonsNowVisibility(boolean areVisible) {
+    private void setButtonsVisibility(boolean areVisible) {
         int visibility = areVisible ? View.VISIBLE : View.INVISIBLE;
         findViewById(R.id.btnMorningTimeNow).setVisibility(visibility);
         findViewById(R.id.btnLunchStartTimeNow).setVisibility(visibility);
         findViewById(R.id.btnLunchEndNow).setVisibility(visibility);
         findViewById(R.id.btnEveningTimeNow).setVisibility(visibility);
+        findViewById(R.id.btnRefresh).setVisibility(visibility);
     }
 
 }
