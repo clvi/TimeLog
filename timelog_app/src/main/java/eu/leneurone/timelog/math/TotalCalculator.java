@@ -43,12 +43,25 @@ public class TotalCalculator {
             // total = morning + afternoon
             total = diffInMinutes(times.get(Marker.LUNCH_START), times.get(Marker.MORNING))
                     + diffInMinutes(times.get(Marker.EVENING), times.get(Marker.LUNCH_END));
-        } else if (times.size() == 2 && times.containsKey(Marker.MORNING) && times.containsKey(Marker.EVENING)) {
+        } else if (times.size() == 2
+                && times.containsKey(Marker.MORNING)
+                && times.containsKey(Marker.EVENING)) {
             // just start and end : we remove 1 hour of standard lunch break
             // total = evening - morning - 1 hour
             total = diffInMinutes(times.get(Marker.EVENING), times.get(Marker.MORNING)) - DEFAULT_LUNCH_DURATION_IN_MINUTES;
-        } else if (theDay.get(Calendar.YEAR) == today.get(Calendar.YEAR)
-                && theDay.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR)) {
+        } else if (times.size() == 2
+                && times.containsKey(Marker.MORNING)
+                && times.containsKey(Marker.LUNCH_START)) {
+            // the morning markers are set : total = lunch_start - morning
+            total = diffInMinutes(times.get(Marker.LUNCH_START), times.get(Marker.MORNING));
+        } else if (times.size() == 3
+                && times.containsKey(Marker.MORNING)
+                && times.containsKey(Marker.LUNCH_START)
+                && ! isToday(today, theDay)) {
+            // the morning markers and one of the evening markers are set, and we're not today :
+            // total = lunch_start - morning
+            total = diffInMinutes(times.get(Marker.LUNCH_START), times.get(Marker.MORNING));
+        } else if (isToday(today, theDay)) {
             // try some things only if the day is today
             if (times.size() == 1 && times.containsKey(Marker.MORNING)) {
                 if (today.get(Calendar.HOUR_OF_DAY) < 13) {
@@ -73,6 +86,11 @@ public class TotalCalculator {
             }
         }
         return minutesToTime(total);
+    }
+
+    private static boolean isToday(@NonNull Calendar today, @NonNull Calendar theDay) {
+        return theDay.get(Calendar.YEAR) == today.get(Calendar.YEAR)
+                && theDay.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR);
     }
 
     // builds a Time from the hours and minutes of the calendar
