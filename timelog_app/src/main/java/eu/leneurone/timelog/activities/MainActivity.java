@@ -68,6 +68,17 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
     @Override
     public void onDateSet(Date date) {
         calendar.setTime(date);
+        refreshDisplay();
+    }
+
+    @Override
+    public void onTimeSet(@NonNull Marker marker, @NonNull Time time) {
+        times.put(marker, time);
+        displayTime(marker, time);
+        refreshTotal();
+    }
+
+    private void refreshDisplay() {
         setTvDisplayDate();
 
         // mask the "Now" buttons if the selected date is not today
@@ -76,13 +87,6 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
 
         clearTimes();
         loadSavedData();
-    }
-
-    @Override
-    public void onTimeSet(@NonNull Marker marker, @NonNull Time time) {
-        times.put(marker, time);
-        displayTime(marker, time);
-        refreshTotal();
     }
 
     private void setTvDisplayDate() {
@@ -146,6 +150,26 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
                 DatePickerFragment picker = new DatePickerFragment();
                 picker.setInitialDate(calendar.getTime());
                 picker.show(getFragmentManager(), "datePicker");
+            }
+        });
+
+        findViewById(R.id.previousDayLayout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO display a confirmation popup if times have been set and not saved,
+                // TODO as the time will be cleared when a new date will be chosen
+                calendar.add(Calendar.DAY_OF_YEAR, -1);
+                refreshDisplay();
+            }
+        });
+
+        findViewById(R.id.nextDayLayout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO display a confirmation popup if times have been set and not saved,
+                // TODO as the time will be cleared when a new date will be chosen
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+                refreshDisplay();
             }
         });
 

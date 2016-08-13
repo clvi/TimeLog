@@ -16,4 +16,6 @@
     <string name="technical_error_msg">Nous sommes désolés, une erreur technique est survenue lors de la sauvegarde&#8230;</string>
     <string name="total">Total :</string>
     <string name="refresh">Rafraîchir</string>
+    <string name="next">&gt;</string>
+    <string name="previous">&lt;</string>
 </resources>
