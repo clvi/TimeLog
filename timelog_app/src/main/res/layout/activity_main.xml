@@ -35,6 +35,8 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
             android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:gravity="center_horizontal"
             android:orientation="horizontal"
             android:weightSum="1">
 
@@ -42,21 +44,23 @@
                 android:id="@+id/tvDate"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
                 android:gravity="center_vertical"
                 android:text=""
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
-            <!-- empty view to align "change the date" button to the right -->
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <Button
+            <ImageButton
                 android:id="@+id/btnChangeDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/change_date" />
+                android:layout_marginBottom="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/change_date"
+                android:src="@drawable/ic_event_black_24dp" />
+
         </LinearLayout>
 
         <Space
@@ -73,16 +77,16 @@
                 android:id="@+id/previousDayLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:orientation="vertical"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="vertical">
 
-                <TextView
+                <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
-                    android:text="@string/previous"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                    android:layout_marginStart="10dp"
+                    android:contentDescription="@string/previous"
+                    android:src="@drawable/ic_keyboard_arrow_left_black_24dp" />
 
             </LinearLayout>
 
@@ -104,6 +108,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
+                    android:layout_marginBottom="10dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -114,17 +119,25 @@
                         android:text=""
                         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/btnChangeMorningTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/change_time" />
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="5dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/change_time"
+                        android:src="@drawable/ic_access_time_black_24dp" />
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/btnMorningTimeNow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/now" />
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="5dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/now"
+                        android:src="@drawable/ic_arrow_downward_black_24dp" />
                 </LinearLayout>
 
                 <TextView
@@ -138,6 +151,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
+                    android:layout_marginBottom="10dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -148,17 +162,26 @@
                         android:text=""
                         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/btnChangeLunchStartTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/change_time" />
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="5dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/change_time"
+                        android:src="@drawable/ic_access_time_black_24dp" />
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/btnLunchStartTimeNow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/now" />
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="5dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/now"
+                        android:src="@drawable/ic_arrow_downward_black_24dp" />
+
                 </LinearLayout>
 
                 <TextView
@@ -172,6 +195,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
+                    android:layout_marginBottom="10dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -182,17 +206,25 @@
                         android:text=""
                         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/btnChangeLunchEndTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/change_time" />
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="5dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/change_time"
+                        android:src="@drawable/ic_access_time_black_24dp" />
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/btnLunchEndNow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/now" />
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="5dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/now"
+                        android:src="@drawable/ic_arrow_downward_black_24dp" />
                 </LinearLayout>
 
                 <TextView
@@ -206,6 +238,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
+                    android:layout_marginBottom="10dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -216,17 +249,25 @@
                         android:text=""
                         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/btnChangeEveningTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/change_time" />
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="5dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/change_time"
+                        android:src="@drawable/ic_access_time_black_24dp" />
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/btnEveningTimeNow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/now" />
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="5dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/now"
+                        android:src="@drawable/ic_arrow_downward_black_24dp" />
                 </LinearLayout>
 
                 <Space
@@ -253,16 +294,16 @@
                 android:id="@+id/nextDayLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:orientation="vertical"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="vertical">
 
-                <TextView
+                <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
-                    android:text="@string/next"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                    android:layout_marginStart="10dp"
+                    android:contentDescription="@string/previous"
+                    android:src="@drawable/ic_keyboard_arrow_right_black_24dp" />
 
             </LinearLayout>
 
@@ -271,18 +312,6 @@
         <Space
             android:layout_width="match_parent"
             android:layout_height="10dp" />
-
-        <Button
-            android:id="@+id/btnSave"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/save" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_gravity="center_horizontal" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -298,12 +327,42 @@
             android:text=""
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <Button
-            android:id="@+id/btnRefresh"
-            android:layout_width="wrap_content"
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="10dp" />
+
+        <LinearLayout
+            android:id="@+id/buttonsLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/refresh" />
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+
+            <ImageButton
+                android:id="@+id/btnRefresh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="5dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/refresh"
+                android:src="@drawable/ic_refresh_black_24dp" />
+
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="match_parent" />
+
+            <ImageButton
+                android:id="@+id/btnSave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="5dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/save"
+                android:src="@drawable/ic_save_black_24dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
