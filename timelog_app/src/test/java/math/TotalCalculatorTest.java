@@ -100,6 +100,12 @@ public class TotalCalculatorTest {
 
         times.put(Marker.LUNCH_END, new Time(13, 45));
         assertEquals(new Time(6, 15), TotalCalculator.calculateTotalTime(calendar, times));
+
+        // special test case : when current time = lunch_end, total = lunch_start - morning
+        calendar.set(Calendar.HOUR_OF_DAY, 13);
+        calendar.set(Calendar.MINUTE, 45);
+        Mockito.when(Calendar.getInstance()).thenReturn(calendar);
+        assertEquals(new Time(4, 30), TotalCalculator.calculateTotalTime(calendar, times));
     }
 
     @Test

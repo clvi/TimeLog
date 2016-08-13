@@ -57,7 +57,7 @@ public class TotalCalculator {
         } else if (times.size() == 3
                 && times.containsKey(Marker.MORNING)
                 && times.containsKey(Marker.LUNCH_START)
-                && ! isToday(today, theDay)) {
+                && !isToday(today, theDay)) {
             // the morning markers and one of the evening markers are set, and we're not today :
             // total = lunch_start - morning
             total = diffInMinutes(times.get(Marker.LUNCH_START), times.get(Marker.MORNING));
@@ -75,8 +75,7 @@ public class TotalCalculator {
             } else if (times.size() == 3
                     && times.containsKey(Marker.MORNING)
                     && times.containsKey(Marker.LUNCH_START)
-                    && times.containsKey(Marker.LUNCH_END)
-                    && (times.get(Marker.LUNCH_END).compareTo(calendarToTime(today)) < 0)) {
+                    && times.containsKey(Marker.LUNCH_END)) {
                 // we are in the afternoon, and all the previous markers are set :
                 // morning = lunch_start - morning
                 // afternoon = now - lunch_end
