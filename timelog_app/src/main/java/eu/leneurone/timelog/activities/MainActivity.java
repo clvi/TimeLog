@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -192,7 +193,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
                     clearValidationTv();
                     // store the data
                     service.storeDayWorklog(calendar.getTime(), times, getApplicationContext());
-                    // TODO display a small and temporary OK icon
+                    // show feedback toast
+                    Toast.makeText(getApplicationContext(), R.string.saveOK, Toast.LENGTH_SHORT).show();
                 } catch (IncoherentMarkersException e) {
                     handleIncoherentMarkersException(e);
                 }
