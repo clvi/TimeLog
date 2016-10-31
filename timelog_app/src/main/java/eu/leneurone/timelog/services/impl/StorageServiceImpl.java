@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -61,6 +62,40 @@ public class StorageServiceImpl implements StorageService {
             Logger.getLogger(StorageServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
             return new HashMap<>();
         }
+    }
+
+    @NonNull
+    @Override
+    public Map<Calendar, Map<Marker, Time>> loadWeekWorklog(@NonNull Calendar givenDay, @NonNull Context context) {
+        int givenDayOfWeek = givenDay.get(Calendar.DAY_OF_WEEK);
+
+        if(givenDayOfWeek == Calendar.MONDAY) {
+            // since the given day is monday, there is no previous day in this week.
+            new HashMap<>();
+        }
+
+        if(givenDayOfWeek == Calendar.SUNDAY) {
+            // in Calendar : SUNDAY = 1, MONDAY = 2, ..., SATURDAY = 7
+            // if givenDayOfWeek = SYNDAY, we should use givenDayOfWeek = 8 instead of 1 to avoid
+            // negative values when calculating the difference between the givenDayOfWeek and monday
+            givenDayOfWeek = 8;
+        }
+
+        // we want days between the day before givenDay and the previous monday
+        // the index of monday in Calendar is 2, so the number of days to remove from givenDay to
+        // have the previous monday is : givenDayOfWeek - MONDAY(2)
+        // so we get days from givenDay-1 to givenDay-(givenDayOfWeek-2)
+
+        int nbOfDaysToRemove = givenDayOfWeek - Calendar.MONDAY;
+
+        // load data for each of the days
+        Map<Calendar, Map<Marker, Time>> data = new HashMap<>();
+        for(int i = 1; i <= nbOfDaysToRemove; i++) {
+            Calendar computeDay = (Calendar) givenDay.clone();
+            computeDay.add(Calendar.DAY_OF_YEAR, -i);
+            data.put(computeDay, this.loadDayWorklog(computeDay.getTime(), context));
+        }
+        return data;
     }
 
     private static String buildFilename(Date date) {

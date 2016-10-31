@@ -18,7 +18,7 @@ import eu.leneurone.timelog.model.Time;
  */
 public class TimesValidatorTest {
 
-    class IncoherentMarkersMatcher extends BaseMatcher<IncoherentMarkersException> {
+    private class IncoherentMarkersMatcher extends BaseMatcher<IncoherentMarkersException> {
 
         private Marker earliest;
         private Marker latest;

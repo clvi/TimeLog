@@ -39,7 +39,11 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
     /**
      * stores the chosen times for the 4 markers
      */
-    Map<Marker, Time> times = new HashMap<>(4);
+    private Map<Marker, Time> times = new HashMap<>(4);
+    /**
+     * stores the total time of the previous days of the week
+     */
+    private Time weekTime;
 
     /**
      * storage service
@@ -79,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         refreshTotal();
     }
 
+    // this method is called when choosing a date using the DatePicker, or with the previous / next buttons
     private void refreshDisplay() {
         setTvDisplayDate();
 
@@ -95,11 +100,23 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         ((TextView) findViewById(R.id.tvDate)).setText(format.format(calendar.getTime()));
     }
 
+    // this method is called at startup or when changing the displayed day with the datepicker or the
+    // previous / next buttons
     private void loadSavedData() {
+        // load data for the displayed date
         times = service.loadDayWorklog(calendar.getTime(), getApplicationContext());
         for (Map.Entry<Marker, Time> timeEntry : times.entrySet()) {
             displayTime(timeEntry.getKey(), timeEntry.getValue());
         }
+
+        // load data for the previous days of the same week
+        Map<Calendar, Map<Marker, Time>> weekData = service.loadWeekWorklog(calendar, getApplicationContext());
+        try {
+            weekTime = TotalCalculator.calculateTotalTime(weekData);
+        } catch (IncoherentMarkersException e) {
+            weekTime = new Time(0,0);
+        }
+
         refreshTotal();
     }
 
@@ -111,10 +128,16 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         times.clear();
     }
 
+    // this method is used to display total after loading saved data, changing the value of a marker
+    // with timePicker or clicking the "refresh" button
     private void refreshTotal() {
         // compute and display total work time
         try {
-            ((TextView) findViewById(R.id.tvTotal)).setText(TimeUtils.formatTime(TotalCalculator.calculateTotalTime(calendar, times)));
+            // current displayed day total time
+            Time totalTime = TotalCalculator.calculateTotalTime(calendar, times);
+            ((TextView) findViewById(R.id.tvTotal)).setText(TimeUtils.formatTime(totalTime));
+            // current week total time
+            ((TextView) findViewById(R.id.tvWeekTotal)).setText(TimeUtils.formatTime(TotalCalculator.sum(weekTime, totalTime)));
             // clear previous validation errors
             clearValidationTv();
         } catch (IncoherentMarkersException e) {

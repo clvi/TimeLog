@@ -18,11 +18,19 @@ public class TotalCalculator {
     /**
      * default lunch duration in minutes
      */
-    public static final int DEFAULT_LUNCH_DURATION_IN_MINUTES = 60;
+    private static final int DEFAULT_LUNCH_DURATION_IN_MINUTES = 60;
 
     private TotalCalculator() {
     }
 
+    /**
+     * Calculates the total work time, given the target day (to choose between today calculation rules
+     * and another day calculation rules) and the time markers.
+     * @param theDay the day for which the total time must be calculated
+     * @param times the time markers
+     * @return the calculated total time
+     * @throws IncoherentMarkersException if the provided markers are incoherent : see {@link TimesValidator#validateMarkersCoherency(Map)}.
+     */
     public static Time calculateTotalTime(@NonNull Calendar theDay, @NonNull Map<Marker, Time> times) throws IncoherentMarkersException {
         if (times.isEmpty()) {
             // fail fast
@@ -85,6 +93,34 @@ public class TotalCalculator {
             }
         }
         return minutesToTime(total);
+    }
+
+    /**
+     * Calculates the total time for a list of days
+     * @param data the data for all the days
+     * @return the total time, which consists on the addition of all the times of the days contained
+     * in the data map. The calculation rules of the {@link TotalCalculator#calculateTotalTime(Calendar, Map)}
+     * method apply for each individual day.
+     * <br />
+     * @throws IncoherentMarkersException if an {@link IncoherentMarkersException} is thrown by the {@link TotalCalculator#calculateTotalTime(Calendar, Map)}
+     * method for at least one day.
+     */
+    public static Time calculateTotalTime(Map<Calendar, Map<Marker, Time>> data) throws IncoherentMarkersException {
+        Time totalTime = new Time(0, 0);
+        for(Map.Entry<Calendar, Map<Marker, Time>> entry : data.entrySet()) {
+            totalTime = sum(totalTime, calculateTotalTime(entry.getKey(), entry.getValue()));
+        }
+        return totalTime;
+    }
+
+    /**
+     * Sum 2 time values
+     * @param time1 the first operand
+     * @param time2 the second operand
+     * @return the sum of the 2 times
+     */
+    public static Time sum(@NonNull Time time1, @NonNull Time time2) {
+        return minutesToTime(timeToMinutesFromMidnight(time1) + timeToMinutesFromMidnight(time2));
     }
 
     private static boolean isToday(@NonNull Calendar today, @NonNull Calendar theDay) {
